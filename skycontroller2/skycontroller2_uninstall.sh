@@ -23,6 +23,8 @@ echo "Remounting filesystem as read-only"
 /tmp/*4g/*/uavpal/bin/adb shell "mount -o remount,ro /" 2>/dev/null
 echo "Removing zerotier-one data"
 /tmp/*4g/*/uavpal/bin/adb shell "rm -rf /data/lib/zerotier-one" 2>/dev/null
+echo "Removing openvpn data"
+/tmp/*4g/*/uavpal/bin/adb shell "rm -rf /data/lib/openvpn" 2>/dev/null
 echo "Removing uavpal softmod files"
 /tmp/*4g/*/uavpal/bin/adb shell "rm -rf /data/lib/ftp/uavpal" 2>/dev/null
 echo "All done! :)"

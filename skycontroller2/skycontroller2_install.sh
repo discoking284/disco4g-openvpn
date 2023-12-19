@@ -30,9 +30,9 @@ echo "Setting file permissions for init script"
 /data/ftp/uavpal/bin/adb shell "chmod 640 /etc/boxinit.d/99-uavpal.rc" 2>/dev/null
 echo "Remounting filesystem as read-only"
 /data/ftp/uavpal/bin/adb shell "mount -o remount,ro /" 2>/dev/null
-echo "Creating zerotier-one directory"
-/data/ftp/uavpal/bin/adb shell "mkdir -p /data/lib/zerotier-one" 2>/dev/null
-echo "Creating symlink for zerotier-one's local config file"
-/data/ftp/uavpal/bin/adb shell "ln -s /data/lib/ftp/uavpal/conf/local.conf /data/lib/zerotier-one/local.conf 2>&1 |grep -v 'File exists'" 2>/dev/null
+echo "Creating openvpn directory"
+/data/ftp/uavpal/bin/adb shell "mkdir -p /data/lib/openvpn" 2>/dev/null
+echo "Creating symlink for openvpn config file"
+/data/ftp/uavpal/bin/adb shell "ln -s /data/lib/ftp/uavpal/conf/openvpn.conf /data/lib/openvpn/openvpn.conf 2>&1 |grep -v 'File exists'" 2>/dev/null
 echo "All done! :)"
 echo

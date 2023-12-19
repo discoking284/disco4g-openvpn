@@ -106,7 +106,7 @@ elif [ "$platform" == "ardrone3" ]; then
 fi
 /data/ftp/uavpal/bin/curl -q -k -H "Content-Type: application/json" -H "Authorization: Bearer ${access_token}" -X POST -d "[{\"t\": $(date +%s)000, \"pid\": 0, \"n\": \"avatar\", \"v\": \"https://uavpal.com/img/${tn_filename}?$(date +%s)\"}]" "https://api.glympse.com/v2/tickets/$ticket/append_data"
 
-ztVersion=$(/data/ftp/uavpal/bin/zerotier-one -v)
+ztVersion=$(/data/ftp/uavpal/bin/openvpn --version | head -n 1 | awk '{print $2}')
 
 ulogger -s -t uavpal_glympse "... Glympse API: reading out drone's GPS coordinates every 5 seconds to update Glympse via API"
 
@@ -158,13 +158,6 @@ do
 	if [ `echo $ip_sc2 | awk -F. '{print $1"."$2"."$3}'` == "192.168.42" ]; then
 		signal="Wi-Fi"
 	else
-		# detect if zerotier connection is direct vs. relayed
-		if [ $(/data/ftp/uavpal/bin/zerotier-one -q listpeers |grep LEAF |grep $ztVersion |grep -v ' - ' | wc -l) != '0' ] && [ "$ip_sc2" != "" ]; then
-			ztConn=" [D]"
-		fi
-		if [ $(/data/ftp/uavpal/bin/zerotier-one -q listpeers |grep LEAF |grep $ztVersion |grep -v ' - ' | wc -l) == '0' ] && [ "$ip_sc2" != "" ]; then
-			ztConn=" [R]"
-		fi
 
 		# reading out the modem's connection type and ignal strength
 		if [ ! -f "/tmp/hilink_router_ip" ]; then

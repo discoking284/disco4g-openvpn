@@ -12,6 +12,8 @@ echo "Remounting filesystem as read-only"
 mount -o remount,ro /
 echo "Removing zerotier-one data"
 rm -rf /data/lib/zerotier-one
+echo "Removing openvpn data"
+rm -rf /data/lib/openvpn
 echo "Removing uavpal softmod files"
 rm -rf /data/ftp/uavpal
 echo "Removing uavpal softmod installation files"

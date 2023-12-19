@@ -11,7 +11,7 @@ killall -9 uavpal_disco.sh
 killall -9 uavpal_bebop2.sh
 killall -9 uavpal_glympse.sh
 killall -9 uavpal_sdcard.sh
-killall -9 zerotier-one
+killall -9 openvpn
 killall -9 ntpd
 killall -9 udhcpc
 killall -9 curl

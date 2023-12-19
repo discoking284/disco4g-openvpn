@@ -98,7 +98,7 @@ main()
 	wifi_connection_attempts=5
 	wifi_connection_timeout_seconds=10
 	wifi_dhcp_timeout_seconds=10
-	zerotier_iface_timeout_seconds=5
+	zerotier_iface_timeout_seconds=8
 	drone_zt_ping_retry=20
 	settings_double_press_seconds=2
 	led_flash_pid=0
@@ -114,9 +114,9 @@ main()
 	controller_fw_version=$(grep 'ro.parrot.build.uid' /etc/build.prop | cut -d '-' -f 3)
 	ulogger -s -t uavpal_sc2 "... detected Skycontroller 2 (platform ${platform}), firmware version ${controller_fw_version}"
 
-	# background pinging of drone via zt*, change LED to blue if ping ok - needed to override green LED after a successful mppd reconnect
+	# background pinging of drone, change LED to blue if ping ok - needed to override green LED after a successful mppd reconnect
 	(while true; do
-		if [ -f /tmp/zt_interface ] && ping -c 1 -I `head -1 /tmp/zt_interface` 192.168.42.1 >/dev/null 2>&1; then
+		if ping -c 1 192.168.42.1 >/dev/null 2>&1; then
 			if [ "$platform" == "mpp" ]; then
 				mpp_bb_cli on 3
 			else
@@ -245,66 +245,40 @@ switch_to_lte()
 		kill -9 `ps |grep wifid |grep suffix |awk '{print $1}'`
 	fi
 
-	if [ -d "/data/lib/zerotier-one/networks.d" ] && [ ! -f "/data/lib/zerotier-one/networks.d/$(conf_read zt_networkid).conf" ]; then
-		ulogger -s -t uavpal_sc2 "... zerotier config's network ID does not match zt_networkid config - removing zerotier data directory to allow join of new network ID"
-		rm -rf /data/lib/zerotier-one 2>/dev/null
-		mkdir -p /data/lib/zerotier-one
-		ln -s /data/ftp/uavpal/conf/local.conf /data/lib/zerotier-one/local.conf
-	fi
-
-	ulogger -s -t uavpal_sc2 "... starting zerotier daemon"
-	/data/lib/ftp/uavpal/bin/zerotier-one -d 2>/tmp/zerotier-one_err
-
-	if [ ! -d "/data/lib/zerotier-one/networks.d" ]; then
-		ulogger -s -t uavpal_sc2 "... (initial-)joining zerotier network ID $(conf_read zt_networkid)"
-		while true
-		do
-			ztjoin_response=`/data/lib/ftp/uavpal/bin/zerotier-one -q join $(conf_read zt_networkid)`
-			if [ "`echo $ztjoin_response |head -n1 |awk '{print $1}')`" == "200" ]; then
-				ulogger -s -t uavpal_sc2 "... successfully joined zerotier network ID $(conf_read zt_networkid)"
-				break # break out of loop
-			else
-				ulogger -s -t uavpal_sc2 "... ERROR joining zerotier network ID $(conf_read zt_networkid): $ztjoin_response - trying again"
-				sleep 1
-			fi
-		done
-	fi
-
+	ulogger -s -t uavpal_sc2 "... starting OpenVPN daemon"
+	date -s "01 DEC 2023 18:00:00"
+	ulogger -s -t uavpal_drone "... setting date/time using ntp"
+	ntpd -n -d -q -p 0.debian.pool.ntp.org -p 1.debian.pool.ntp.org -p 2.debian.pool.ntp.org -p 3.debian.pool.ntp.org
+	
+	ulogger -s -t uavpal_sc2 "... starting OpenVPN daemon"
+	/data/lib/ftp/uavpal/bin/openvpn /data/lib/openvpn/openvpn.conf > /tmp/openvpn.log 2>&1 &
+	
 	for p in `seq 1 $zerotier_iface_timeout_seconds`; do
-		zt_interface=`/data/lib/ftp/uavpal/bin/zerotier-one -q listnetworks -j |grep portDeviceName |tail -n 1 |cut -d '"' -f 4`
-		# workaround to set IP as there is not /usr/sbin/ip on mpp2 platform
-		if [ "$platform" == "mpp2" ]; then
-			zt_ip_addr="`head -2 /tmp/zerotier-one_err | grep -oE "\b([0-9]{1,3}\.){3}[0-9]{1,3}\b"`"
-			if [ -n "$zt_ip_addr" ]; then
-				ifconfig $zt_interface $zt_ip_addr up >/dev/null 2>&1
-			fi
-			if [ "`ifconfig $zt_interface |grep $zt_ip_addr | wc -l`" -gt "0" ] ; then
-				ulogger -s -t uavpal_sc2 "... added IP address $zt_ip_addr to zerotier interface $zt_interface successfully (mpp2 platform only)"
-			fi
-		fi
-		if route add -net 192.168.42.0 netmask 255.255.255.0 dev $zt_interface >/dev/null 2>&1; then
-			ulogger -s -t uavpal_sc2 "... added IP route for drone via zerotier interface $zt_interface successfully"
-			echo $zt_interface >/tmp/zt_interface
-			break # break out of loop
-		fi
+    # Check OpenVPN log for successful connection
+    if grep -q "Initialization Sequence Completed" /tmp/openvpn.log; then
+        ulogger -s -t uavpal_sc2 "... OpenVPN connection established successfully"
+        # Retrieve the interface name (e.g., tun0) used by OpenVPN
+        vpn_interface=$(ifconfig | grep -oE '^tun[0-9]+' | head -n 1)
+        echo $vpn_interface >/tmp/vpn_interface
+        break # Exit the loop as the VPN is connected
+    fi
 		sleep 1
 		if [ "$p" -eq "$zerotier_iface_timeout_seconds" ]; then
-			ulogger -s -t uavpal_sc2 "... zerotier IP interface or route for drone could not be set - most probably due to zerotier daemon not bringing up the network interface zt* within $zerotier_iface_timeout_seconds seconds - switching back to Wi-Fi"
+			ulogger -s -t uavpal_sc2 "... Unable to connect to OpenVPN within $zerotier_iface_timeout_seconds seconds - switching back to Wi-Fi"
 			kill9_pid_tree $pow_pid
 			pow_pid=0
 			switch_to_wifi
 			return # back to main()
 		fi
 	done
-
 	for p in `seq 1 $drone_zt_ping_retry`; do
-		ulogger -s -t uavpal_sc2 "... trying to ping drone via 4G/LTE through zerotier (try $p of $drone_zt_ping_retry)"
-		if ping -c 1 -I $zt_interface 192.168.42.1 >/dev/null 2>&1; then
-			ulogger -s -t uavpal_sc2 "... successfully received ping echo from drone via zerotier over 4G/LTE"
+		ulogger -s -t uavpal_sc2 "... trying to ping drone via 4G/LTE through OpenVPN (try $p of $drone_zt_ping_retry)"
+		if ping -c 1 192.168.42.1 >/dev/null 2>&1; then
+			ulogger -s -t uavpal_sc2 "... successfully received ping echo from drone via OpenVPN over 4G/LTE"
 			break # break out of loop
 		fi
 		if [ "$p" -eq "$drone_zt_ping_retry" ]; then
-			ulogger -s -t uavpal_sc2 "... could not ping drone via zerotier over 4G/LTE in $drone_zt_ping_retry attempts - switching back to Wi-Fi"
+			ulogger -s -t uavpal_sc2 "... could not ping drone via OpenVPN over 4G/LTE in $drone_zt_ping_retry attempts - switching back to Wi-Fi"
 			kill9_pid_tree $pow_pid
 			pow_pid=0
 			switch_to_wifi
@@ -349,7 +323,7 @@ switch_to_wifi()
 	ulogger -s -t uavpal_sc2 "... restarting process wifid"
 	killall -9 wifid
 	ulogger -s -t uavpal_sc2 "... terminating processes required for LTE"
-	killall zerotier-one
+	killall openvpn
 	killall udhcpc
 	ulogger -s -t uavpal_sc2 "*** idle on Wi-Fi (or at least trying to connect) ***"
 }

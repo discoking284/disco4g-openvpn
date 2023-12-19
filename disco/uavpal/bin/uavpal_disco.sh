@@ -132,29 +132,21 @@ fi
 ulogger -s -t uavpal_drone "... starting Glympse script for GPS tracking"
 /data/ftp/uavpal/bin/uavpal_glympse.sh &
 
-if [ -d "/data/lib/zerotier-one/networks.d" ] && [ ! -f "/data/lib/zerotier-one/networks.d/$(conf_read zt_networkid).conf" ]; then
-	ulogger -s -t uavpal_drone "... zerotier config's network ID does not match zt_networkid config - removing zerotier data directory to allow join of new network ID"
-	rm -rf /data/lib/zerotier-one 2>/dev/null
-	mkdir -p /data/lib/zerotier-one
-	ln -s /data/ftp/uavpal/conf/local.conf /data/lib/zerotier-one/local.conf
-fi
+ulogger -s -t uavpal_drone "... starting openvpn daemon"
+/data/ftp/uavpal/bin/openvpn /data/lib/openvpn/openvpn.conf > /tmp/openvpn.log 2>&1 &
 
-ulogger -s -t uavpal_drone "... starting zerotier daemon"
-/data/ftp/uavpal/bin/zerotier-one -d
+while true; do
+    # Check OpenVPN log for successful connection
+    if grep -q "Initialization Sequence Completed" /tmp/openvpn.log; then
+        ulogger -s -t uavpal_drone "... OpenVPN connection established successfully"
 
-if [ ! -d "/data/lib/zerotier-one/networks.d" ]; then
-	ulogger -s -t uavpal_drone "... (initial-)joining zerotier network ID $(conf_read zt_networkid)"
-	while true
-	do
-		ztjoin_response=`/data/ftp/uavpal/bin/zerotier-one -q join $(conf_read zt_networkid)`
-		if [ "`echo $ztjoin_response |head -n1 |awk '{print $1}')`" == "200" ]; then
-			ulogger -s -t uavpal_drone "... successfully joined zerotier network ID $(conf_read zt_networkid)"
-			break # break out of loop
-		else
-			ulogger -s -t uavpal_drone "... ERROR joining zerotier network ID $(conf_read zt_networkid): $ztjoin_response - trying again"
-			sleep 1
-		fi
-	done
-fi
+        # Retrieve the interface name (e.g., tun0) used by OpenVPN
+        vpn_interface=$(ifconfig | grep -oE '^tun[0-9]+' | head -n 1)
+        echo $vpn_interface >/tmp/vpn_interface
+        break # Exit the loop as the VPN is connected
+    fi
+    sleep 1
+done
+# Log an idle message
 ulogger -s -t uavpal_drone "*** idle on LTE ***"
 } &

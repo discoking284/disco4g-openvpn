@@ -1,0 +1,87 @@
+Certificate:
+    Data:
+        Version: 3 (0x2)
+        Serial Number:
+            17:f4:e4:82:e1:fe:2b:7f:f6:17:dd:1e:f5:9b:64:9e
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: CN=DiscoVPN
+        Validity
+            Not Before: Nov 30 22:38:36 2023 GMT
+            Not After : Jun  6 22:38:36 2133 GMT
+        Subject: CN=Server
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+                Public-Key: (2048 bit)
+                Modulus:
+                    00:b8:43:55:ce:8a:89:26:d1:bc:dc:06:69:e9:35:
+                    6b:4b:1a:60:13:18:da:d6:58:8d:84:4d:e6:b5:f1:
+                    c8:6e:c9:4a:ba:f0:0e:90:32:59:2c:ff:70:88:50:
+                    61:48:8c:6b:19:91:fc:4c:f1:26:4e:4c:ca:33:2a:
+                    e0:c4:63:a9:f3:d9:6b:da:1e:75:cd:d1:20:11:59:
+                    70:5d:a3:44:54:19:00:bc:cc:9a:78:b7:0a:21:9a:
+                    3f:5d:cb:59:48:ae:72:1c:18:22:18:0b:2e:3a:1e:
+                    92:50:69:d3:d8:a3:dd:5c:2a:b4:46:0d:6f:75:1c:
+                    84:b4:53:16:92:e8:d9:14:06:e0:3d:30:7f:aa:69:
+                    59:a3:ae:23:4a:10:12:55:cc:a1:65:4c:af:c8:ca:
+                    32:b1:28:66:f1:26:05:a2:db:46:0b:e9:6d:e2:69:
+                    17:50:ef:45:ad:b0:7c:da:69:99:b2:11:a8:ad:fc:
+                    bc:39:91:cc:1c:37:51:c0:e7:25:30:c1:f9:21:96:
+                    7d:e7:fa:ae:cb:e9:ab:10:ae:fa:fa:6d:a5:59:65:
+                    a7:2f:e5:18:ff:67:b0:19:bd:55:98:e1:7a:25:2d:
+                    37:19:a2:3f:5a:18:bc:d0:3d:89:93:be:f4:14:8e:
+                    8a:45:ad:e1:72:35:11:38:7a:29:3d:a4:d7:6d:40:
+                    5b:59
+                Exponent: 65537 (0x10001)
+        X509v3 extensions:
+            X509v3 Basic Constraints: 
+                CA:FALSE
+            X509v3 Subject Key Identifier: 
+                68:D9:B3:AF:78:BD:47:EA:B4:B8:9D:2B:A7:52:45:9D:ED:7A:4F:F8
+            X509v3 Authority Key Identifier: 
+                keyid:42:F0:62:50:DA:CE:26:63:02:30:C8:42:7D:67:58:DB:A3:2A:DC:4E
+                DirName:/CN=DiscoVPN
+                serial:3C:FD:82:98:86:3C:3C:54:C5:97:66:C6:CA:AD:73:C9:3D:50:7B:67
+            X509v3 Extended Key Usage: 
+                TLS Web Server Authentication
+            X509v3 Key Usage: 
+                Digital Signature, Key Encipherment
+            X509v3 Subject Alternative Name: 
+                DNS:Server
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        3b:0a:9f:5d:22:8d:ca:13:11:cb:5c:1f:e6:82:68:51:3a:17:
+        f9:9a:b3:f2:4c:2c:03:81:ef:34:ff:74:ad:90:bc:c0:ff:5c:
+        4b:c6:c6:5b:12:ed:7b:41:b9:d0:dc:79:b0:14:cb:79:59:63:
+        68:e4:af:6f:91:c9:d8:98:55:10:e7:92:85:eb:65:1c:9c:0a:
+        3c:15:8d:01:25:68:76:41:46:fe:25:1f:db:6f:d9:88:b3:37:
+        3d:31:0e:16:1f:ba:e9:f9:d5:63:f1:d6:1a:f0:61:50:71:f5:
+        99:d1:b9:bb:60:4b:d1:44:3c:ef:c4:b6:90:c7:a1:63:42:be:
+        89:59:99:3a:fd:c0:a9:eb:5c:7a:dc:ac:2a:45:a5:23:dd:4e:
+        8c:2d:cd:73:e7:81:6e:03:51:79:15:82:ec:1e:46:ca:35:bf:
+        95:be:34:39:24:f6:b3:e4:9c:50:e2:87:53:e3:6c:d3:2a:08:
+        48:a4:b4:f0:57:04:c3:33:a0:22:dc:f7:10:8b:65:a5:db:39:
+        2a:ce:19:32:d3:7c:38:ab:fa:2d:3a:13:a3:2d:58:1a:f7:41:
+        16:aa:09:ee:c4:f6:f7:f3:5b:85:5e:c3:69:cd:24:d8:72:14:
+        0c:87:c7:51:35:7d:0e:3d:50:df:74:bf:19:ab:9b:b3:03:ec:
+        9b:a6:c4:7f
+-----BEGIN CERTIFICATE-----
+MIIDYzCCAkugAwIBAgIQF/TkguH+K3/2F90e9ZtknjANBgkqhkiG9w0BAQsFADAT
+MREwDwYDVQQDDAhEaXNjb1ZQTjAgFw0yMzExMzAyMjM4MzZaGA8yMTMzMDYwNjIy
+MzgzNlowETEPMA0GA1UEAwwGU2VydmVyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8A
+MIIBCgKCAQEAuENVzoqJJtG83AZp6TVrSxpgExja1liNhE3mtfHIbslKuvAOkDJZ
+LP9wiFBhSIxrGZH8TPEmTkzKMyrgxGOp89lr2h51zdEgEVlwXaNEVBkAvMyaeLcK
+IZo/XctZSK5yHBgiGAsuOh6SUGnT2KPdXCq0Rg1vdRyEtFMWkujZFAbgPTB/qmlZ
+o64jShASVcyhZUyvyMoysShm8SYFottGC+lt4mkXUO9FrbB82mmZshGorfy8OZHM
+HDdRwOclMMH5IZZ95/quy+mrEK76+m2lWWWnL+UY/2ewGb1VmOF6JS03GaI/Whi8
+0D2Jk770FI6KRa3hcjUROHopPaTXbUBbWQIDAQABo4GyMIGvMAkGA1UdEwQCMAAw
+HQYDVR0OBBYEFGjZs694vUfqtLidK6dSRZ3tek/4ME4GA1UdIwRHMEWAFELwYlDa
+ziZjAjDIQn1nWNujKtxOoRekFTATMREwDwYDVQQDDAhEaXNjb1ZQToIUPP2CmIY8
+PFTFl2bGyq1zyT1Qe2cwEwYDVR0lBAwwCgYIKwYBBQUHAwEwCwYDVR0PBAQDAgWg
+MBEGA1UdEQQKMAiCBlNlcnZlcjANBgkqhkiG9w0BAQsFAAOCAQEAOwqfXSKNyhMR
+y1wf5oJoUToX+Zqz8kwsA4HvNP90rZC8wP9cS8bGWxLte0G50Nx5sBTLeVljaOSv
+b5HJ2JhVEOeShetlHJwKPBWNASVodkFG/iUf22/ZiLM3PTEOFh+66fnVY/HWGvBh
+UHH1mdG5u2BL0UQ878S2kMehY0K+iVmZOv3AqetcetysKkWlI91OjC3Nc+eBbgNR
+eRWC7B5GyjW/lb40OST2s+ScUOKHU+Ns0yoISKS08FcEwzOgItz3EItlpds5Ks4Z
+MtN8OKv6LToToy1YGvdBFqoJ7sT29/NbhV7Dac0k2HIUDIfHUTV9Dj1Q33S/Gaub
+swPsm6bEfw==
+-----END CERTIFICATE-----
